@@ -15,6 +15,7 @@
 </style>
 
 <h1>Sales Pipeline</h1>
+<a href="/deals/create" class="btn btn-primary mb-3">Add Deal</a>
 
 <div class="container-fluid">
     <div class="row flex-nowrap overflow-auto">

@@ -30,4 +30,22 @@ class DealRepository
 
         return $stmt->fetchAll(PDO::FETCH_CLASS, Deal::class);
     }
+
+    public function create(Deal $deal): bool
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO deals (name, budget, contact_id, user_id, stage_id, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)"
+        );
+
+        return $stmt->execute([
+            $deal->name,
+            $deal->budget,
+            $deal->contact_id,
+            $deal->user_id,
+            $deal->stage_id,
+            date('Y-m-d H:i:s'),
+            date('Y-m-d H:i:s')
+        ]);
+    }
 } 
