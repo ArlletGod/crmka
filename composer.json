@@ -1,0 +1,17 @@
+{
+    "name": "crm/project",
+    "description": "CRM system",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maxim Sucicov"
+        }
+    ],
+    "require": {}
+}
