@@ -51,4 +51,46 @@ class ContactRepository
             date('Y-m-d H:i:s'),
         ]);
     }
+
+    public function findById(int $id): ?Contact
+    {
+        $stmt = $this->db->prepare("SELECT * FROM contacts WHERE id = ?");
+        $stmt->execute([$id]);
+        $data = $stmt->fetch();
+
+        if (!$data) {
+            return null;
+        }
+
+        $contact = new Contact();
+        $contact->id = (int) $data['id'];
+        $contact->name = $data['name'];
+        $contact->email = $data['email'];
+        $contact->phone = $data['phone'];
+        $contact->created_at = $data['created_at'];
+        $contact->updated_at = $data['updated_at'];
+        
+        return $contact;
+    }
+
+    public function update(Contact $contact): bool
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE contacts SET name = ?, email = ?, phone = ?, updated_at = ? WHERE id = ?"
+        );
+
+        return $stmt->execute([
+            $contact->name,
+            $contact->email,
+            $contact->phone,
+            date('Y-m-d H:i:s'),
+            $contact->id
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM contacts WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 } 

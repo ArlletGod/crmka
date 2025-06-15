@@ -40,4 +40,31 @@ class ContactController
         }
         exit;
     }
+
+    public function edit(int $id)
+    {
+        $contact = $this->contactService->getContactById($id);
+        if (!$contact) {
+            http_response_code(404);
+            echo 'Contact not found';
+            exit;
+        }
+
+        $view = new View();
+        echo $view->render('contacts/edit', ['contact' => $contact]);
+    }
+
+    public function update(int $id)
+    {
+        $this->contactService->updateContact($id, $_POST);
+        header('Location: /contacts');
+        exit;
+    }
+
+    public function delete(int $id)
+    {
+        $this->contactService->deleteContact($id);
+        header('Location: /contacts');
+        exit;
+    }
 } 

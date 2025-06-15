@@ -20,7 +20,9 @@
             <td><?= htmlspecialchars($contact->phone ?? '') ?></td>
             <td>
                 <a href="/contacts/edit/<?= $contact->id ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
-                <a href="/contacts/delete/<?= $contact->id ?>" class="btn btn-sm btn-outline-danger">Delete</a>
+                <?php if ((new \App\Core\Auth())->user()['role'] === 'admin'): ?>
+                <a href="/contacts/delete/<?= $contact->id ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                <?php endif; ?>
             </td>
         </tr>
         <?php endforeach; ?>

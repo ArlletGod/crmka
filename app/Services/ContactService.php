@@ -32,4 +32,28 @@ class ContactService
 
         return $this->contactRepository->create($contact);
     }
+
+    public function getContactById(int $id): ?\App\Models\Contact
+    {
+        return $this->contactRepository->findById($id);
+    }
+
+    public function updateContact(int $id, array $data): bool
+    {
+        $contact = $this->contactRepository->findById($id);
+        if (!$contact) {
+            return false;
+        }
+
+        $contact->name = htmlspecialchars($data['name'] ?? $contact->name);
+        $contact->email = isset($data['email']) ? htmlspecialchars($data['email']) : $contact->email;
+        $contact->phone = isset($data['phone']) ? htmlspecialchars($data['phone']) : $contact->phone;
+
+        return $this->contactRepository->update($contact);
+    }
+
+    public function deleteContact(int $id): bool
+    {
+        return $this->contactRepository->delete($id);
+    }
 } 
