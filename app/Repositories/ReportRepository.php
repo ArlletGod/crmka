@@ -45,4 +45,36 @@ class ReportRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getDashboardStats(): array
+    {
+        $stats = [];
+        $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+        // New contacts in last 30 days
+        $stmt = $this->db->prepare("SELECT COUNT(id) as count FROM contacts WHERE created_at >= ?");
+        $stmt->execute([$thirtyDaysAgo]);
+        $stats['new_contacts_last_30_days'] = $stmt->fetchColumn();
+
+        // Won deals stats in last 30 days
+        $stmt = $this->db->prepare("SELECT COUNT(id) as count, SUM(budget) as sum FROM deals WHERE status = 'won' AND updated_at >= ?");
+        $stmt->execute([$thirtyDaysAgo]);
+        $wonDeals = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stats['won_deals_last_30_days_count'] = $wonDeals['count'] ?? 0;
+        $stats['won_deals_last_30_days_sum'] = $wonDeals['sum'] ?? 0;
+
+        return $stats;
+    }
+
+    public function getUpcomingTasks(int $userId, int $limit = 5): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM tasks 
+            WHERE user_id = ? AND status = 'pending' AND due_date IS NOT NULL
+            ORDER BY due_date ASC
+            LIMIT ?
+        ");
+        $stmt->execute([$userId, $limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } 
