@@ -30,4 +30,19 @@ class ReportRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getDealsCountByStage(): array
+    {
+        $stmt = $this->db->query("
+            SELECT
+                ps.name as stage_name,
+                COUNT(d.id) as deal_count
+            FROM pipeline_stages ps
+            LEFT JOIN deals d ON ps.id = d.stage_id
+            GROUP BY ps.id, ps.name
+            ORDER BY ps.sort_order ASC
+        ");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } 

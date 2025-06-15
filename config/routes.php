@@ -39,6 +39,7 @@ return [
 
     // Reports
     ['GET', '/reports/sales-by-manager', [ReportController::class, 'salesByManager'], [AuthMiddleware::class]],
+    ['GET', '/reports/pipeline-funnel', [ReportController::class, 'pipelineFunnel'], [AuthMiddleware::class]],
 
     // Contacts
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],

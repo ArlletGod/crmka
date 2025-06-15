@@ -17,4 +17,9 @@ class ReportService
     {
         return $this->reportRepository->getSalesByManager();
     }
+
+    public function getDealsCountByStageReport(): array
+    {
+        return $this->reportRepository->getDealsCountByStage();
+    }
 } 
