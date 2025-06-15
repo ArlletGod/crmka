@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'driver' => 'mysql',
+    'driver' => 'pgsql',
     'host' => '127.0.0.1',
-    'port' => '3306',
+    'port' => '5432',
     'database' => 'crm_db',
-    'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8mb4',
-    'collation' => 'utf8mb4_unicode_ci',
+    'username' => 'postgres',
+    'password' => '1111',
+    'charset' => 'utf8',
+    'collation' => 'utf8_unicode_ci',
     'prefix' => '',
 ]; 
