@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\View;
 use App\Services\ContactService;
 
 class ContactController
@@ -17,8 +18,26 @@ class ContactController
     {
         $contacts = $this->contactService->getAllContacts();
         
-        // Временный вывод, пока не созданы представления
-        header('Content-Type: application/json');
-        echo json_encode($contacts);
+        $view = new View();
+        echo $view->render('contacts/index', ['contacts' => $contacts]);
+    }
+
+    public function create()
+    {
+        $view = new View();
+        echo $view->render('contacts/create');
+    }
+
+    public function store()
+    {
+        $success = $this->contactService->createContact($_POST);
+
+        if ($success) {
+            header('Location: /contacts');
+        } else {
+            // Можно добавить сообщение об ошибке
+            header('Location: /contacts/create');
+        }
+        exit;
     }
 } 

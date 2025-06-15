@@ -36,4 +36,19 @@ class ContactRepository
 
         return $contacts;
     }
+
+    public function create(Contact $contact): bool
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO contacts (name, email, phone, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
+        );
+        
+        return $stmt->execute([
+            $contact->name,
+            $contact->email,
+            $contact->phone,
+            date('Y-m-d H:i:s'),
+            date('Y-m-d H:i:s'),
+        ]);
+    }
 } 

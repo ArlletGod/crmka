@@ -8,6 +8,5 @@ return [
     'username' => 'postgres',
     'password' => '1111',
     'charset' => 'utf8',
-    'collation' => 'utf8_unicode_ci',
     'prefix' => '',
 ]; 

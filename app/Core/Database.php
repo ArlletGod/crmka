@@ -17,7 +17,11 @@ class Database
         if (self::$instance === null) {
             $config = require __DIR__ . '/../../config/database.php';
             
-            $dsn = "{$config['driver']}:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}";
+            $dsn = "{$config['driver']}:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+
+            if ($config['driver'] === 'mysql') {
+                $dsn .= ";charset={$config['charset']}";
+            }
             
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
