@@ -29,17 +29,17 @@ class TaskRepository
             LEFT JOIN deals d ON d.id = t.deal_id
             ORDER BY t.created_at DESC
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_CLASS, Task::class);
     }
 
-    public function create(Task $task): bool
+    public function create(Task $task): ?Task
     {
         $stmt = $this->db->prepare(
             "INSERT INTO tasks (name, description, due_date, status, user_id, contact_id, deal_id, created_at, updated_at) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        return $stmt->execute([
+        $success = $stmt->execute([
             $task->name,
             $task->description,
             $task->due_date,
@@ -50,17 +50,34 @@ class TaskRepository
             date('Y-m-d H:i:s'),
             date('Y-m-d H:i:s')
         ]);
+
+        if ($success) {
+            $id = (int)$this->db->lastInsertId();
+            return $this->findById($id);
+        }
+        return null;
     }
 
-    public function findById(int $id): ?array
+    public function findById(int $id): ?Task
     {
-        $stmt = $this->db->prepare("SELECT * FROM tasks WHERE id = ?");
+        $stmt = $this->db->prepare("
+            SELECT
+                t.*,
+                u.name as user_name,
+                c.name as contact_name,
+                d.name as deal_name
+            FROM tasks t
+            JOIN users u ON u.id = t.user_id
+            LEFT JOIN contacts c ON c.id = t.contact_id
+            LEFT JOIN deals d ON d.id = t.deal_id
+            WHERE t.id = ?
+        ");
         $stmt->execute([$id]);
-        $task = $stmt->fetch(PDO::FETCH_ASSOC);
+        $task = $stmt->fetchObject(Task::class);
         return $task ?: null;
     }
 
-    public function update(Task $task): bool
+    public function update(Task $task): ?Task
     {
         $stmt = $this->db->prepare(
             "UPDATE tasks SET 
@@ -69,21 +86,28 @@ class TaskRepository
                 due_date = ?, 
                 status = ?, 
                 contact_id = ?, 
-                deal_id = ?, 
+                deal_id = ?,
+                user_id = ?,
                 updated_at = ?
             WHERE id = ?"
         );
 
-        return $stmt->execute([
+        $success = $stmt->execute([
             $task->name,
             $task->description,
             $task->due_date,
             $task->status,
             $task->contact_id,
             $task->deal_id,
+            $task->user_id,
             date('Y-m-d H:i:s'),
             $task->id
         ]);
+
+        if ($success) {
+            return $this->findById($task->id);
+        }
+        return null;
     }
 
     public function delete(int $id): bool

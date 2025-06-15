@@ -15,39 +15,26 @@ class UserRepository
         $this->db = Database::getInstance();
     }
 
-    public function create(User $user): bool
+    /**
+     * @return User[]
+     */
+    public function findAll(): array
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO users (name, email, password, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
-        );
-        
-        return $stmt->execute([
-            $user->name,
-            $user->email,
-            $user->password,
-            $user->role,
-            date('Y-m-d H:i:s'),
-            date('Y-m-d H:i:s'),
-        ]);
+        $stmt = $this->db->query("SELECT id, name, email, role FROM users ORDER BY name ASC");
+        return $stmt->fetchAll(PDO::FETCH_CLASS, User::class);
     }
 
     public function findByEmail(string $email): ?User
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $data = $stmt->fetch();
+        $user = $stmt->fetchObject(User::class);
+        return $user ?: null;
+    }
 
-        if (!$data) {
-            return null;
-        }
-
-        $user = new User();
-        $user->id = (int)$data['id'];
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->password = $data['password'];
-        $user->role = $data['role'];
-        
-        return $user;
+    public function create(User $user): bool
+    {
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+        return $stmt->execute([$user->name, $user->email, $user->password]);
     }
 } 

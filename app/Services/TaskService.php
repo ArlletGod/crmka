@@ -15,47 +15,49 @@ class TaskService
         $this->taskRepository = new TaskRepository();
     }
 
-    public function createTask(array $data): bool
+    public function getAllTasks(): array
+    {
+        return $this->taskRepository->findAll();
+    }
+    
+    public function createTask(array $data): ?Task
     {
         $auth = new Auth();
         if (!$auth->check()) {
-            return false;
+            return null;
         }
 
         $task = new Task();
         $task->name = htmlspecialchars($data['name']);
         $task->description = !empty($data['description']) ? htmlspecialchars($data['description']) : null;
         $task->due_date = !empty($data['due_date']) ? $data['due_date'] : null;
-        $task->status = 'pending';
-        $task->user_id = $auth->id();
+        $task->status = 'pending'; // Default status
+        $task->user_id = (int)($data['user_id'] ?? $auth->id());
         $task->contact_id = !empty($data['contact_id']) ? (int)$data['contact_id'] : null;
         $task->deal_id = !empty($data['deal_id']) ? (int)$data['deal_id'] : null;
 
         return $this->taskRepository->create($task);
     }
 
-    public function getTaskById(int $id): ?array
+    public function getTaskById(int $id): ?Task
     {
         return $this->taskRepository->findById($id);
     }
 
-    public function updateTask(int $id, array $data): bool
+    public function updateTask(int $id, array $data): ?Task
     {
-        $taskData = $this->taskRepository->findById($id);
-        if (!$taskData) {
-            return false;
+        $task = $this->taskRepository->findById($id);
+        if (!$task) {
+            return null;
         }
 
-        $task = new Task();
-        $task->id = $id;
-        $task->name = htmlspecialchars($data['name']);
-        $task->description = !empty($data['description']) ? htmlspecialchars($data['description']) : null;
-        $task->due_date = !empty($data['due_date']) ? $data['due_date'] : null;
-        $task->status = htmlspecialchars($data['status']);
-        $task->contact_id = !empty($data['contact_id']) ? (int)$data['contact_id'] : null;
-        $task->deal_id = !empty($data['deal_id']) ? (int)$data['deal_id'] : null;
-        
-        // user_id is not updated as the assignee should not change on simple edit
+        $task->name = htmlspecialchars($data['name'] ?? $task->name);
+        $task->description = isset($data['description']) ? htmlspecialchars($data['description']) : $task->description;
+        $task->due_date = isset($data['due_date']) ? $data['due_date'] : $task->due_date;
+        $task->status = htmlspecialchars($data['status'] ?? $task->status);
+        $task->user_id = (int)($data['user_id'] ?? $task->user_id);
+        $task->contact_id = isset($data['contact_id']) ? (int)$data['contact_id'] : $task->contact_id;
+        $task->deal_id = isset($data['deal_id']) ? (int)$data['deal_id'] : $task->deal_id;
         
         return $this->taskRepository->update($task);
     }

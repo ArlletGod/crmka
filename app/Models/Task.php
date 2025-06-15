@@ -14,4 +14,9 @@ class Task
     public ?int $deal_id;
     public string $created_at;
     public ?string $updated_at;
+
+    // For JOINs
+    public ?string $user_name = null;
+    public ?string $contact_name = null;
+    public ?string $deal_name = null;
 } 

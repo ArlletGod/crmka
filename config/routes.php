@@ -9,6 +9,8 @@ use App\Controllers\TaskController;
 use App\Controllers\ReportController;
 use App\Controllers\Api\ContactController as ApiContactController;
 use App\Controllers\Api\CompanyController as ApiCompanyController;
+use App\Controllers\Api\TaskController as ApiTaskController;
+use App\Controllers\Api\UserController as ApiUserController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
@@ -57,6 +59,16 @@ return [
     ['GET', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'show'], [AuthMiddleware::class]],
     ['PUT', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'update'], [AuthMiddleware::class]],
     ['DELETE', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'destroy'], [AuthMiddleware::class, AdminMiddleware::class]],
+
+    // Tasks
+    ['GET', '/api/tasks', [ApiTaskController::class, 'index'], [AuthMiddleware::class]],
+    ['POST', '/api/tasks', [ApiTaskController::class, 'store'], [AuthMiddleware::class]],
+    ['GET', '/api/tasks/{id:\d+}', [ApiTaskController::class, 'show'], [AuthMiddleware::class]],
+    ['PUT', '/api/tasks/{id:\d+}', [ApiTaskController::class, 'update'], [AuthMiddleware::class]],
+    ['DELETE', '/api/tasks/{id:\d+}', [ApiTaskController::class, 'destroy'], [AuthMiddleware::class]],
+
+    // Users (for select options)
+    ['GET', '/api/users', [ApiUserController::class, 'index'], [AuthMiddleware::class]],
 
     // --- Web Pages (some are handled by JS) ---
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
