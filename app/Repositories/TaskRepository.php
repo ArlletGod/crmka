@@ -51,4 +51,44 @@ class TaskRepository
             date('Y-m-d H:i:s')
         ]);
     }
+
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM tasks WHERE id = ?");
+        $stmt->execute([$id]);
+        $task = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $task ?: null;
+    }
+
+    public function update(Task $task): bool
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE tasks SET 
+                name = ?, 
+                description = ?, 
+                due_date = ?, 
+                status = ?, 
+                contact_id = ?, 
+                deal_id = ?, 
+                updated_at = ?
+            WHERE id = ?"
+        );
+
+        return $stmt->execute([
+            $task->name,
+            $task->description,
+            $task->due_date,
+            $task->status,
+            $task->contact_id,
+            $task->deal_id,
+            date('Y-m-d H:i:s'),
+            $task->id
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 } 

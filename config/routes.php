@@ -30,6 +30,9 @@ return [
     ['GET', '/tasks', [TaskController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/tasks/create', [TaskController::class, 'create'], [AuthMiddleware::class]],
     ['POST', '/tasks', [TaskController::class, 'store'], [AuthMiddleware::class]],
+    ['GET', '/tasks/{id:\d+}/edit', [TaskController::class, 'edit'], [AuthMiddleware::class]],
+    ['POST', '/tasks/{id:\d+}', [TaskController::class, 'update'], [AuthMiddleware::class]],
+    ['POST', '/tasks/{id:\d+}/delete', [TaskController::class, 'destroy'], [AuthMiddleware::class]],
 
     ['GET', '/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]],
 

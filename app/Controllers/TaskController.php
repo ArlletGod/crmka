@@ -45,4 +45,37 @@ class TaskController
         header('Location: /tasks');
         exit;
     }
+
+    public function edit(int $id)
+    {
+        $task = $this->taskService->getTaskById($id);
+        if (!$task) {
+            // Handle not found, maybe a 404 page
+            header("Location: /tasks");
+            exit;
+        }
+
+        $contacts = $this->contactRepository->findAll();
+        $deals = $this->dealRepository->findAll();
+
+        echo (new View())->render('tasks/edit', [
+            'task' => $task,
+            'contacts' => $contacts,
+            'deals' => $deals
+        ]);
+    }
+
+    public function update(int $id)
+    {
+        $this->taskService->updateTask($id, $_POST);
+        header('Location: /tasks');
+        exit;
+    }
+
+    public function destroy(int $id)
+    {
+        $this->taskService->deleteTask($id);
+        header('Location: /tasks');
+        exit;
+    }
 } 

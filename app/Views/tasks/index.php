@@ -34,7 +34,7 @@
             </td>
             <td>
                 <a href="/tasks/<?= $task['id'] ?>/edit" class="btn btn-sm btn-warning">Edit</a>
-                <form action="/tasks/<?= $task['id'] ?>" method="POST" class="d-inline">
+                <form action="/tasks/<?= $task['id'] ?>/delete" method="POST" class="d-inline">
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                 </form>
             </td>
