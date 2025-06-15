@@ -3,16 +3,20 @@
 namespace App\Services;
 
 use App\Core\Auth;
+use App\Core\Config;
 use App\Models\Deal;
 use App\Repositories\DealRepository;
+use App\Services\CurrencyService;
 
 class DealService
 {
     private DealRepository $dealRepository;
+    private CurrencyService $currencyService;
 
     public function __construct()
     {
         $this->dealRepository = new DealRepository();
+        $this->currencyService = new CurrencyService();
     }
 
     public function createDeal(array $data): ?Deal
@@ -24,7 +28,22 @@ class DealService
 
         $deal = new Deal();
         $deal->name = htmlspecialchars($data['name']);
-        $deal->budget = !empty($data['budget']) ? (float)$data['budget'] : null;
+
+        $originalBudget = !empty($data['budget']) ? (float)$data['budget'] : null;
+        $currency = $data['currency'] ?? Config::get('base_currency');
+        $baseCurrency = Config::get('base_currency');
+
+        $deal->original_budget = $originalBudget;
+        $deal->currency = $currency;
+
+        if ($originalBudget !== null && $currency !== $baseCurrency) {
+            $rates = $this->currencyService->getRates($currency);
+            // Convert submitted budget to the base currency
+            $deal->budget = $this->currencyService->convert($originalBudget, $currency, $baseCurrency, $rates);
+        } else {
+            $deal->budget = $originalBudget;
+        }
+
         $deal->contact_id = (int)$data['contact_id'];
         $deal->stage_id = (int)$data['stage_id'];
         $deal->user_id = (int)$data['user_id'];

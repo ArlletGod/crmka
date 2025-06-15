@@ -51,13 +51,15 @@ class DealRepository
     public function create(Deal $deal): ?Deal
     {
         $stmt = $this->db->prepare(
-            "INSERT INTO deals (name, budget, status, contact_id, user_id, stage_id, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO deals (name, budget, original_budget, currency, status, contact_id, user_id, stage_id, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         $success = $stmt->execute([
             $deal->name,
             $deal->budget,
+            $deal->original_budget,
+            $deal->currency,
             $deal->status,
             $deal->contact_id,
             $deal->user_id,

@@ -11,32 +11,55 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="/"><?= __('app_name') ?></a>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <?php if ((new \App\Core\Auth())->check()): ?>
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contacts"><?= __('contacts') ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/companies"><?= __('companies') ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/deals"><?= __('deals') ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/tasks"><?= __('tasks') ?></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <?= __('reports') ?>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/reports/sales-by-manager"><?= __('sales_by_manager') ?></a></li>
-                            <li><a class="dropdown-item" href="/reports/pipeline-funnel"><?= __('pipeline_funnel') ?></a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <?php
+            $auth = new \App\Core\Auth();
+            if ($auth->check()):
+            ?>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/contacts"><?= __('contacts') ?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/companies"><?= __('companies') ?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/deals"><?= __('deals') ?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tasks"><?= __('tasks') ?></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?= __('reports') ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/reports/sales-by-manager"><?= __('sales_by_manager') ?></a></li>
+                        <li><a class="dropdown-item" href="/reports/pipeline-funnel"><?= __('pipeline_funnel') ?></a></li>
+                    </ul>
+                </li>
+            </ul>
             <?php endif; ?>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <?php
+                // --- Currency Setup ---
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+                $currencies = \App\Core\Config::get('currencies', ['USD' => '$']);
+                $current_currency = $_SESSION['currency'] ?? \App\Core\Config::get('base_currency');
+                // --- End Currency Setup ---
+                ?>
+                <!-- Currency Switcher -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarCurrencyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?= $current_currency ?> (<?= $currencies[$current_currency] ?? '' ?>)
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarCurrencyDropdown">
+                        <?php foreach ($currencies as $code => $symbol): ?>
+                            <li><a class="dropdown-item" href="/currency?code=<?= $code ?>"><?= $code ?> (<?= $symbol ?>)</a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarLangDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,7 +71,7 @@
                         <li><a class="dropdown-item" href="/lang?lang=ro">RO</a></li>
                     </ul>
                 </li>
-                <?php if ($user = (new \App\Core\Auth())->user()): ?>
+                <?php if ($user = $auth->user()): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><?= htmlspecialchars($user['name']) ?></a>
                     </li>

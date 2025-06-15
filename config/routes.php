@@ -8,6 +8,7 @@ use App\Controllers\DealController;
 use App\Controllers\TaskController;
 use App\Controllers\ReportController;
 use App\Controllers\LanguageController;
+use App\Controllers\CurrencyController;
 use App\Controllers\Api\ContactController as ApiContactController;
 use App\Controllers\Api\CompanyController as ApiCompanyController;
 use App\Controllers\Api\TaskController as ApiTaskController;
@@ -75,4 +76,5 @@ return [
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/companies', [CompanyController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/lang', [LanguageController::class, 'switchLang']],
+    ['GET', '/currency', [CurrencyController::class, 'switchCurrency']],
 ]; 

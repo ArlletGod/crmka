@@ -20,6 +20,31 @@
     <h1 class="h3 mb-0 text-gray-800"><?= __('dashboard') ?></h1>
 </div>
 
+<?php
+    use App\Core\Config;
+    // --- Currency Conversion Setup ---
+    if (session_status() == PHP_SESSION_NONE) { session_start(); }
+    $currencyService = new \App\Services\CurrencyService();
+    $baseCurrency = Config::get('base_currency');
+    $displayCurrency = $_SESSION['currency'] ?? $baseCurrency;
+    $currencies = Config::get('currencies');
+    $displaySymbol = $currencies[$displayCurrency] ?? '$';
+
+    $rates = $_SESSION['currency_rates'] ?? null;
+    if ($rates === null || ($_SESSION['currency_rates_base'] ?? '') !== $baseCurrency) {
+        $rates = $currencyService->getRates($baseCurrency);
+        $_SESSION['currency_rates'] = $rates;
+        $_SESSION['currency_rates_base'] = $baseCurrency;
+    }
+
+    function formatDisplayCurrency($amountInBase, $displayCurrency, $displaySymbol, $rates) {
+        if (empty($rates) || !isset($rates[$displayCurrency])) { return $displaySymbol . number_format($amountInBase, 2); }
+        $convertedAmount = $amountInBase * $rates[$displayCurrency];
+        return $displaySymbol . number_format($convertedAmount, 2);
+    }
+    // --- End Currency Setup ---
+?>
+
 <!-- KPI Cards -->
 <div class="row">
     <div class="col-xl-4 col-md-6 mb-4">
@@ -56,7 +81,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1"><?= __('revenue_last_30_days') ?></div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$<?= number_format($stats['won_deals_last_30_days_sum'], 2) ?></div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?= formatDisplayCurrency($stats['won_deals_last_30_days_sum'], $displayCurrency, $displaySymbol, $rates) ?></div>
                     </div>
                     <div class="col-auto"><i class="fas fa-dollar-sign fa-2x text-gray-300"></i></div>
                 </div>

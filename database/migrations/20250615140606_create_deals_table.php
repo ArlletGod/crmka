@@ -22,6 +22,8 @@ final class CreateDealsTable extends AbstractMigration
         $table = $this->table('deals');
         $table->addColumn('name', 'string')
               ->addColumn('budget', 'decimal', ['precision' => 10, 'scale' => 2, 'null' => true])
+              ->addColumn('original_budget', 'decimal', ['precision' => 10, 'scale' => 2, 'null' => true])
+              ->addColumn('currency', 'string', ['limit' => 3, 'default' => 'MDL'])
               ->addColumn('contact_id', 'integer')
               ->addColumn('user_id', 'integer')
               ->addColumn('stage_id', 'integer')

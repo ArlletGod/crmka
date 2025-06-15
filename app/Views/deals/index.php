@@ -1,6 +1,31 @@
 <?php
+    use App\Core\Config;
     // Get current user ID for the form
     $currentUserId = (new \App\Core\Auth())->id();
+
+    // --- Currency Conversion Setup ---
+    if (session_status() == PHP_SESSION_NONE) { session_start(); }
+    $currencyService = new \App\Services\CurrencyService();
+    $baseCurrency = Config::get('base_currency');
+    $displayCurrency = $_SESSION['currency'] ?? $baseCurrency;
+    $currencies = Config::get('currencies');
+    $displaySymbol = $currencies[$displayCurrency] ?? '$';
+
+    // Fetch rates if not in session or if base has changed
+    $rates = $_SESSION['currency_rates'] ?? null;
+    if ($rates === null || ($_SESSION['currency_rates_base'] ?? '') !== $baseCurrency) {
+        $rates = $currencyService->getRates($baseCurrency);
+        $_SESSION['currency_rates'] = $rates;
+        $_SESSION['currency_rates_base'] = $baseCurrency;
+    }
+
+    // Helper function for display
+    function formatDisplayCurrency($amountInBase, $displayCurrency, $displaySymbol, $rates) {
+        if (!isset($rates[$displayCurrency])) { return $displaySymbol . number_format($amountInBase, 2); } // Fallback
+        $convertedAmount = $amountInBase * $rates[$displayCurrency];
+        return $displaySymbol . number_format($convertedAmount, 2);
+    }
+    // --- End Currency Setup ---
 ?>
 <style>
     .pipeline-stage {
@@ -33,7 +58,7 @@
                         <?php foreach ($stageData['deals'] as $deal): ?>
                             <div class="deal-card" data-deal-id="<?= $deal->id ?>">
                                 <h6><?= htmlspecialchars($deal->name) ?></h6>
-                                <p class="mb-1"><strong><?= __('budget') ?>:</strong> $<?= number_format($deal->budget, 2) ?></p>
+                                <p class="mb-1"><strong><?= __('budget') ?>:</strong> <?= formatDisplayCurrency($deal->budget, $displayCurrency, $displaySymbol, $rates) ?></p>
                                 <p class="mb-1"><strong><?= __('contact') ?>:</strong> <?= htmlspecialchars($deal->contact_name) ?></p>
                                 <p class="mb-0"><strong><?= __('manager') ?>:</strong> <?= htmlspecialchars($deal->user_name) ?></p>
                             </div>
@@ -64,7 +89,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="dealBudget" class="form-label"><?= __('budget') ?></label>
-                        <input type="number" class="form-control" id="dealBudget" name="budget" step="0.01">
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="dealBudget" name="budget" step="0.01">
+                            <select class="form-select" name="currency" id="dealCurrency" style="max-width: 100px;">
+                                <?php foreach ($currencies as $code => $symbol): ?>
+                                    <option value="<?= $code ?>" <?= $code === $displayCurrency ? 'selected' : '' ?>><?= $code ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="dealContact" class="form-label"><?= __('contact') ?></label>
@@ -114,6 +146,13 @@ const translations = {
     budget: "<?= __('budget') ?>",
     contact: "<?= __('contact') ?>",
     manager: "<?= __('manager') ?>",
+};
+
+const currencyInfo = {
+    rates: <?= json_encode($rates) ?>,
+    base: '<?= $baseCurrency ?>',
+    display: '<?= $displayCurrency ?>',
+    displaySymbol: '<?= $displaySymbol ?>'
 };
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -184,11 +223,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    const formatCurrencyJS = (amount, symbol, rates) => {
+        if (!amount) return 'N/A';
+        const rate = rates[currencyInfo.display] || 1;
+        const convertedAmount = parseFloat(amount) * rate;
+        return `${symbol}${convertedAmount.toFixed(2)}`;
+    };
+
     const createDealCard = (deal) => {
         const card = document.createElement('div');
         card.className = 'deal-card';
         card.dataset.dealId = deal.id;
-        const budget = deal.budget ? `$${Number(deal.budget).toFixed(2)}` : 'N/A';
+        const budget = formatCurrencyJS(deal.budget, currencyInfo.displaySymbol, currencyInfo.rates);
         card.innerHTML = `
             <h6>${escapeHTML(deal.name)}</h6>
             <p class="mb-1"><strong>${translations.budget}:</strong> ${budget}</p>
