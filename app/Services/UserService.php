@@ -41,4 +41,25 @@ class UserService
 
         return $this->userRepository->create($user);
     }
+
+    public function login(array $data): ?User
+    {
+        // 1. Валидация
+        if (empty($data['email']) || empty($data['password'])) {
+            return null;
+        }
+
+        // 2. Поиск пользователя
+        $user = $this->userRepository->findByEmail($data['email']);
+        if (!$user) {
+            return null;
+        }
+
+        // 3. Проверка пароля
+        if (!password_verify($data['password'], $user->password)) {
+            return null;
+        }
+
+        return $user;
+    }
 } 

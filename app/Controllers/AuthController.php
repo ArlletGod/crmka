@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\View;
 use App\Services\UserService;
 
@@ -31,6 +32,33 @@ class AuthController
             // Можно добавить сообщение об ошибке
             header('Location: /register');
         }
+        exit;
+    }
+
+    public function loginForm()
+    {
+        $view = new View();
+        echo $view->render('auth/login');
+    }
+
+    public function login()
+    {
+        $user = $this->userService->login($_POST);
+
+        if ($user) {
+            (new Auth())->login($user->id, $user->role);
+            header('Location: /');
+        } else {
+            // Можно добавить сообщение об ошибке
+            header('Location: /login');
+        }
+        exit;
+    }
+
+    public function logout()
+    {
+        (new Auth())->logout();
+        header('Location: /login');
         exit;
     }
 } 

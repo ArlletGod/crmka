@@ -16,7 +16,11 @@ class Router
 
         $this->dispatcher = simpleDispatcher(function (RouteCollector $r) use ($routes) {
             foreach ($routes as $route) {
-                $r->addRoute($route[0], $route[1], $route[2]);
+                $handler = [
+                    'controller' => $route[2],
+                    'middleware' => $route[3] ?? [], // Middleware is optional
+                ];
+                $r->addRoute($route[0], $route[1], $handler);
             }
         });
     }
@@ -41,7 +45,14 @@ class Router
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 
-                [$controller, $method] = $handler;
+                $middlewares = $handler['middleware'];
+
+                // Execute middleware
+                foreach ($middlewares as $middleware) {
+                    (new $middleware())->handle();
+                }
+
+                [$controller, $method] = $handler['controller'];
                 (new $controller())->$method(...$vars);
                 break;
         }
