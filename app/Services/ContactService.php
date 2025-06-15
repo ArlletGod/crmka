@@ -29,6 +29,7 @@ class ContactService
         $contact->name = htmlspecialchars($data['name']);
         $contact->email = !empty($data['email']) ? htmlspecialchars($data['email']) : null;
         $contact->phone = !empty($data['phone']) ? htmlspecialchars($data['phone']) : null;
+        $contact->company_id = !empty($data['company_id']) ? (int)$data['company_id'] : null;
 
         return $this->contactRepository->create($contact);
     }
@@ -48,6 +49,7 @@ class ContactService
         $contact->name = htmlspecialchars($data['name'] ?? $contact->name);
         $contact->email = isset($data['email']) ? htmlspecialchars($data['email']) : $contact->email;
         $contact->phone = isset($data['phone']) ? htmlspecialchars($data['phone']) : $contact->phone;
+        $contact->company_id = !empty($data['company_id']) ? (int)$data['company_id'] : null;
 
         return $this->contactRepository->update($contact);
     }

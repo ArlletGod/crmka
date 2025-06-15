@@ -13,5 +13,16 @@
         <label for="phone" class="form-label">Phone</label>
         <input type="text" class="form-control" id="phone" name="phone" value="<?= htmlspecialchars($contact->phone ?? '') ?>">
     </div>
+    <div class="mb-3">
+        <label for="company_id" class="form-label">Company</label>
+        <select class="form-select" id="company_id" name="company_id">
+            <option value="">Select a company</option>
+            <?php foreach ($companies as $company): ?>
+                <option value="<?= $company->id ?>" <?= ($contact->company_id == $company->id) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($company->name) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
     <button type="submit" class="btn btn-primary">Update</button>
 </form> 

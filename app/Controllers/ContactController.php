@@ -3,15 +3,18 @@
 namespace App\Controllers;
 
 use App\Core\View;
+use App\Services\CompanyService;
 use App\Services\ContactService;
 
 class ContactController
 {
     private ContactService $contactService;
+    private CompanyService $companyService;
 
     public function __construct()
     {
         $this->contactService = new ContactService();
+        $this->companyService = new CompanyService();
     }
 
     public function index()
@@ -24,8 +27,9 @@ class ContactController
 
     public function create()
     {
+        $companies = $this->companyService->getAllCompanies();
         $view = new View();
-        echo $view->render('contacts/create');
+        echo $view->render('contacts/create', ['companies' => $companies]);
     }
 
     public function store()
@@ -49,9 +53,10 @@ class ContactController
             echo 'Contact not found';
             exit;
         }
+        $companies = $this->companyService->getAllCompanies();
 
         $view = new View();
-        echo $view->render('contacts/edit', ['contact' => $contact]);
+        echo $view->render('contacts/edit', ['contact' => $contact, 'companies' => $companies]);
     }
 
     public function update(int $id)

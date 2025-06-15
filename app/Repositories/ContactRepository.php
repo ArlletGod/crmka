@@ -20,17 +20,26 @@ class ContactRepository
      */
     public function findAll(): array
     {
-        $stmt = $this->db->query("SELECT * FROM contacts ORDER BY created_at DESC");
+        $stmt = $this->db->query("
+            SELECT c.*, co.name as company_name 
+            FROM contacts c
+            LEFT JOIN companies co ON c.company_id = co.id
+            ORDER BY c.created_at DESC
+        ");
         
+        $contactsData = $stmt->fetchAll();
         $contacts = [];
-        while ($row = $stmt->fetch()) {
+
+        foreach ($contactsData as $row) {
             $contact = new Contact();
             $contact->id = (int) $row['id'];
             $contact->name = $row['name'];
             $contact->email = $row['email'];
             $contact->phone = $row['phone'];
+            $contact->company_id = $row['company_id'] ? (int)$row['company_id'] : null;
             $contact->created_at = $row['created_at'];
             $contact->updated_at = $row['updated_at'];
+            $contact->company_name = $row['company_name'];
             $contacts[] = $contact;
         }
 
@@ -40,13 +49,14 @@ class ContactRepository
     public function create(Contact $contact): bool
     {
         $stmt = $this->db->prepare(
-            "INSERT INTO contacts (name, email, phone, created_at, updated_at) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO contacts (name, email, phone, company_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
         );
         
         return $stmt->execute([
             $contact->name,
             $contact->email,
             $contact->phone,
+            $contact->company_id,
             date('Y-m-d H:i:s'),
             date('Y-m-d H:i:s'),
         ]);
@@ -76,13 +86,14 @@ class ContactRepository
     public function update(Contact $contact): bool
     {
         $stmt = $this->db->prepare(
-            "UPDATE contacts SET name = ?, email = ?, phone = ?, updated_at = ? WHERE id = ?"
+            "UPDATE contacts SET name = ?, email = ?, phone = ?, company_id = ?, updated_at = ? WHERE id = ?"
         );
 
         return $stmt->execute([
             $contact->name,
             $contact->email,
             $contact->phone,
+            $contact->company_id,
             date('Y-m-d H:i:s'),
             $contact->id
         ]);

@@ -8,6 +8,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Company</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -18,6 +19,7 @@
             <td><?= htmlspecialchars($contact->name) ?></td>
             <td><?= htmlspecialchars($contact->email ?? '') ?></td>
             <td><?= htmlspecialchars($contact->phone ?? '') ?></td>
+            <td><?= htmlspecialchars($contact->company_name ?? 'N/A') ?></td>
             <td>
                 <a href="/contacts/edit/<?= $contact->id ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
                 <?php if ((new \App\Core\Auth())->user()['role'] === 'admin'): ?>
