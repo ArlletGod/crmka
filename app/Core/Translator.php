@@ -36,7 +36,7 @@ class Translator
 
     private static function getLangFilePath(string $lang): string
     {
-        return __DIR__ . '/../../language/' . $lang . '.php';
+        return __DIR__ . '/../../resources/lang/' . $lang . '.php';
     }
 
     public static function get(string $key, array $replace = []): string

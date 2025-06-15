@@ -42,7 +42,7 @@
 
             <!-- Search form in the middle -->
             <form class="d-flex mx-auto" action="/search" method="GET">
-                <input class="form-control me-2" type="search" name="q" placeholder="<?= __('search') ?>..." aria-label="Search">
+                <input class="form-control me-2" type="search" name="q" placeholder="<?= __('search_placeholder') ?>" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit"><?= __('search') ?></button>
             </form>
 
