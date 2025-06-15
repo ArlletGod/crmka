@@ -122,4 +122,16 @@ class ContactRepository
         $stmt = $this->db->prepare("DELETE FROM contacts WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function getAll()
+    {
+        return $this->db->query("SELECT * FROM contacts")->fetchAll();
+    }
+
+    public function search(string $query)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM contacts WHERE name LIKE ? OR email LIKE ?");
+        $stmt->execute(["%$query%", "%$query%"]);
+        return $stmt->fetchAll();
+    }
 } 

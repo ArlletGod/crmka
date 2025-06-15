@@ -16,6 +16,7 @@ use App\Controllers\Api\UserController as ApiUserController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
+use App\Controllers\SearchController;
 
 return [
     // --- Guest routes ---
@@ -77,4 +78,16 @@ return [
     ['GET', '/companies', [CompanyController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/lang', [LanguageController::class, 'switchLang']],
     ['GET', '/currency', [CurrencyController::class, 'switchCurrency']],
+
+    // Search
+    ['GET', '/search', [SearchController::class, 'index'], [AuthMiddleware::class]],
+
+    // Tasks data
+    ['GET', '/tasks/data', [TaskController::class, 'data'], [AuthMiddleware::class]],
+
+    // Reports
+    ['GET', '/reports/sales_by_manager', [ReportController::class, 'salesByManager'], [AuthMiddleware::class]],
+
+    // API Deals
+    ['GET', '/api/deals', [DealController::class, 'index'], [AuthMiddleware::class]],
 ]; 

@@ -115,4 +115,16 @@ class TaskRepository
         $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function getAll()
+    {
+        return $this->db->query("SELECT * FROM tasks")->fetchAll();
+    }
+
+    public function search(string $query)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM tasks WHERE name LIKE ? OR description LIKE ?");
+        $stmt->execute(["%$query%", "%$query%"]);
+        return $stmt->fetchAll();
+    }
 } 

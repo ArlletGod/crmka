@@ -80,4 +80,33 @@ class DealRepository
         $stmt = $this->db->prepare("UPDATE deals SET stage_id = ?, status = ?, updated_at = ? WHERE id = ?");
         return $stmt->execute([$newStageId, $status, date('Y-m-d H:i:s'), $dealId]);
     }
+
+    public function update(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare("UPDATE deals SET name = ?, budget = ?, original_budget = ?, currency = ?, status = ?, contact_id = ?, user_id = ?, stage_id = ? WHERE id = ?");
+        $stmt->execute([
+            $data['name'],
+            $data['budget'],
+            $data['original_budget'],
+            $data['currency'],
+            $data['status'],
+            $data['contact_id'],
+            $data['user_id'],
+            $data['stage_id'],
+            $id
+        ]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function search(string $query)
+    {
+        $sql = "SELECT d.*, c.name as company_name 
+                FROM deals d
+                LEFT JOIN contacts contact ON d.contact_id = contact.id
+                LEFT JOIN companies c ON contact.company_id = c.id
+                WHERE d.name LIKE ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(["%$query%"]);
+        return $stmt->fetchAll();
+    }
 }

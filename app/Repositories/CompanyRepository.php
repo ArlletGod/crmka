@@ -62,4 +62,16 @@ class CompanyRepository
         $stmt = $this->db->prepare("DELETE FROM companies WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function getAll()
+    {
+        return $this->db->query("SELECT * FROM companies")->fetchAll();
+    }
+
+    public function search(string $query)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM companies WHERE name LIKE ?");
+        $stmt->execute(["%$query%"]);
+        return $stmt->fetchAll();
+    }
 } 
