@@ -9,52 +9,57 @@
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">CRM</a>
+        <a class="navbar-brand" href="/"><?= __('app_name') ?></a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <?php if ((new \App\Core\Auth())->check()): ?>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/contacts">Contacts</a>
+                        <a class="nav-link" href="/contacts"><?= __('contacts') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/companies">Companies</a>
+                        <a class="nav-link" href="/companies"><?= __('companies') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/deals">Deals</a>
+                        <a class="nav-link" href="/deals"><?= __('deals') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/tasks">Tasks</a>
+                        <a class="nav-link" href="/tasks"><?= __('tasks') ?></a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Reports
+                            <?= __('reports') ?>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/reports/sales-by-manager">Sales by Manager</a></li>
-                            <li><a class="dropdown-item" href="/reports/pipeline-funnel">Pipeline Funnel</a></li>
+                            <li><a class="dropdown-item" href="/reports/sales-by-manager"><?= __('sales_by_manager') ?></a></li>
+                            <li><a class="dropdown-item" href="/reports/pipeline-funnel"><?= __('pipeline_funnel') ?></a></li>
                         </ul>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <?php
-                        $auth = new \App\Core\Auth();
-                        $user = $auth->user();
-                    ?>
-                    <?php if ($user): ?>
-                        <?php if (isset($user['name'])): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><?= htmlspecialchars($user['name']) ?></a>
-                            </li>
-                        <?php endif; ?>
-                        <li class="nav-item">
-                            <a href="/logout" class="btn btn-outline-secondary">Logout</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            <?php else: ?>
-                <a href="/login" class="btn btn-primary me-2">Login</a>
-                <a href="/register" class="btn btn-secondary">Register</a>
             <?php endif; ?>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Language Switcher -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarLangDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?= strtoupper(\App\Core\Translator::getLang()) ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarLangDropdown">
+                        <li><a class="dropdown-item" href="/lang?lang=en">EN</a></li>
+                        <li><a class="dropdown-item" href="/lang?lang=ru">RU</a></li>
+                        <li><a class="dropdown-item" href="/lang?lang=ro">RO</a></li>
+                    </ul>
+                </li>
+                <?php if ($user = (new \App\Core\Auth())->user()): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><?= htmlspecialchars($user['name']) ?></a>
+                    </li>
+                    <li class="nav-item">
+                         <a href="/logout" class="btn btn-outline-secondary"><?= __('logout') ?></a>
+                    </li>
+                <?php else: ?>
+                    <a href="/login" class="btn btn-primary me-2"><?= __('login') ?></a>
+                    <a href="/register" class="btn btn-secondary"><?= __('register') ?></a>
+                <?php endif; ?>
+            </ul>
         </div>
     </div>
 </nav>

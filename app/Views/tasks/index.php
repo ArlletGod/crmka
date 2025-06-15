@@ -1,17 +1,17 @@
 <?php $currentUserId = (new \App\Core\Auth())->id(); ?>
 
-<h1>Tasks</h1>
-<button id="addTaskBtn" class="btn btn-primary mb-3">Add Task</button>
+<h1><?= __('tasks') ?></h1>
+<button id="addTaskBtn" class="btn btn-primary mb-3"><?= __('add_task') ?></button>
 
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Status</th>
-            <th>Name</th>
-            <th>Due Date</th>
-            <th>Assigned To</th>
-            <th>Related To</th>
-            <th>Actions</th>
+            <th><?= __('status') ?></th>
+            <th><?= __('name') ?></th>
+            <th><?= __('due_date') ?></th>
+            <th><?= __('assigned_to') ?></th>
+            <th><?= __('related_to') ?></th>
+            <th><?= __('actions') ?></th>
         </tr>
     </thead>
     <tbody id="tasksTableBody"></tbody>
@@ -22,42 +22,42 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="taskModalLabel">Add Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="taskModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= __('close') ?>"></button>
             </div>
             <div class="modal-body">
                 <form id="taskForm">
                     <input type="hidden" id="taskId" name="id">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Task Name</label>
+                        <label for="name" class="form-label"><?= __('task_name') ?></label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label"><?= __('description') ?></label>
                         <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="due_date" class="form-label">Due Date</label>
+                            <label for="due_date" class="form-label"><?= __('due_date') ?></label>
                             <input type="datetime-local" class="form-control" id="due_date" name="due_date">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Status</label>
+                            <label for="status" class="form-label"><?= __('status') ?></label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="pending">Pending</option>
-                                <option value="completed">Completed</option>
+                                <option value="pending"><?= __('pending') ?></option>
+                                <option value="completed"><?= __('completed') ?></option>
                             </select>
                         </div>
                     </div>
                      <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="user_id" class="form-label">Assigned To</label>
+                            <label for="user_id" class="form-label"><?= __('assigned_to') ?></label>
                             <select class="form-select" id="user_id" name="user_id" required>
                                 <!-- Users loaded via JS -->
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="contact_id" class="form-label">Related Contact (Optional)</label>
+                            <label for="contact_id" class="form-label"><?= __('related_contact_optional') ?></label>
                             <select class="form-select" id="contact_id" name="contact_id">
                                 <!-- Contacts loaded via JS -->
                             </select>
@@ -66,8 +66,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="taskForm" class="btn btn-primary">Save Task</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('close') ?></button>
+                <button type="submit" form="taskForm" class="btn btn-primary"><?= __('save_task') ?></button>
             </div>
         </div>
     </div>
@@ -76,63 +76,72 @@
 <!-- Toast container -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
     <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header"><strong class="me-auto">Notification</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+        <div class="toast-header"><strong class="me-auto"><?= __('notification') ?></strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="<?= __('close') ?>"></button></div>
         <div class="toast-body"></div>
     </div>
 </div>
 
 <script>
+const translations = {
+    add: "<?= __('add_task') ?>",
+    edit: "<?= __('edit_task') ?>",
+    confirm_delete: "<?= __('confirm_delete_task') ?>",
+    created_successfully: "<?= __('task_created_successfully') ?>",
+    updated_successfully: "<?= __('task_updated_successfully') ?>",
+    deleted_successfully: "<?= __('task_deleted_successfully') ?>",
+    failed_to_load: "<?= __('failed_to_load_tasks') ?>",
+    failed_to_save: "<?= __('failed_to_save_task') ?>",
+    failed_to_load_data: "<?= __('failed_to_load_task_data') ?>",
+    failed_to_delete: "<?= __('failed_to_delete_task') ?>",
+    failed_to_load_form: "<?= __('failed_to_load_form_data') ?>",
+    server_error: "<?= __('server_error') ?>",
+    edit_btn: "<?= __('edit') ?>",
+    delete_btn: "<?= __('delete') ?>",
+    select_user: "<?= __('select_user') ?>",
+    select_contact_optional: "<?= __('select_contact_optional') ?>",
+};
+
 document.addEventListener('DOMContentLoaded', async function () {
-    // --- Modal & Form Elements ---
     const taskModal = new bootstrap.Modal(document.getElementById('taskModal'));
     const taskForm = document.getElementById('taskForm');
     const taskModalLabel = document.getElementById('taskModalLabel');
     const tableBody = document.getElementById('tasksTableBody');
-
-    // --- Toast Notifications ---
     const toastElement = document.getElementById('liveToast');
     const toast = new bootstrap.Toast(toastElement);
     const showToast = (message, success = true) => {
         toastElement.querySelector('.toast-body').textContent = message;
-        toastElement.classList.remove('bg-success', 'bg-danger');
+        toastElement.classList.remove('bg-success', 'bg-danger', 'text-white');
         toastElement.classList.add(success ? 'bg-success' : 'bg-danger', 'text-white');
-        toastElement.querySelector('.toast-header').classList.remove('bg-success', 'bg-danger');
-        toastElement.querySelector('.toast-header').classList.add(success ? 'bg-success' : 'bg-danger', 'text-white');
         toast.show();
     };
 
-    // --- API & Data ---
     const api = { tasks: '/api/tasks', contacts: '/api/contacts', users: '/api/users' };
-    let relatedDataCache = { users: [], contacts: [] };
 
-    // --- Utility Functions ---
     const escapeHTML = (str) => String(str || '').replace(/[&<>"']/g, m => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#039;'})[m]);
-    
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
-        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     };
 
-    // --- Rendering ---
     const renderRow = (task) => {
         const row = document.createElement('tr');
         row.dataset.id = task.id;
+        const statusClass = task.status === 'completed' ? 'bg-success' : 'bg-warning';
+        const statusText = task.status === 'completed' ? '<?= __('completed') ?>' : '<?= __('pending') ?>';
         row.innerHTML = `
-            <td><span class="badge ${task.status === 'completed' ? 'bg-success' : 'bg-warning'}">${escapeHTML(task.status)}</span></td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
             <td>${escapeHTML(task.name)}</td>
             <td>${formatDate(task.due_date)}</td>
             <td>${escapeHTML(task.user_name)}</td>
-            <td>${escapeHTML(task.contact_name || task.deal_name || 'N/A')}</td>
+            <td>${escapeHTML(task.contact_name || 'N/A')}</td>
             <td>
-                <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                <button class="btn btn-sm btn-warning edit-btn">${translations.edit_btn}</button>
+                <button class="btn btn-sm btn-danger delete-btn">${translations.delete_btn}</button>
             </td>
         `;
         return row;
     };
 
-    // --- Data Loading ---
     const loadSelectOptions = async (url, selectId, placeholder) => {
         try {
             const response = await fetch(url);
@@ -145,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             return items;
         } catch (error) {
             console.error(`Failed to load ${selectId}:`, error);
-            showToast(`Failed to load data for form.`, false);
+            showToast(translations.failed_to_load_form, false);
         }
     };
     
@@ -157,15 +166,14 @@ document.addEventListener('DOMContentLoaded', async function () {
             tasks.forEach(task => tableBody.appendChild(renderRow(task)));
         } catch (error) {
             console.error('Failed to load tasks:', error);
-            showToast('Failed to load tasks.', false);
+            showToast(translations.failed_to_load, false);
         }
     };
     
-    // --- Event Handlers ---
     document.getElementById('addTaskBtn').addEventListener('click', () => {
         taskForm.reset();
         document.getElementById('taskId').value = '';
-        taskModalLabel.textContent = 'Add Task';
+        taskModalLabel.textContent = translations.add;
         document.getElementById('status').value = 'pending';
         document.getElementById('user_id').value = '<?= $currentUserId ?>';
         taskModal.show();
@@ -184,33 +192,26 @@ document.addEventListener('DOMContentLoaded', async function () {
                 
                 Object.keys(task).forEach(key => {
                     const el = taskForm.elements[key];
-                    if (el) {
-                        if (key === 'due_date' && task[key]) {
-                            el.value = task[key].slice(0, 16); // Format for datetime-local
-                        } else {
-                            el.value = task[key];
-                        }
-                    }
+                    if (el) el.value = (key === 'due_date' && task[key]) ? task[key].slice(0, 16) : task[key];
                 });
-                document.getElementById('taskId').value = task.id;
-                taskModalLabel.textContent = 'Edit Task';
+                taskModalLabel.textContent = translations.edit;
                 taskModal.show();
             } catch (error) {
-                 console.error('Failed to fetch task for editing:', error);
-                 showToast('Failed to load task data.', false);
+                 console.error('Failed to fetch task:', error);
+                 showToast(translations.failed_to_load_data, false);
             }
         }
 
         if (target.classList.contains('delete-btn')) {
-            if (confirm('Are you sure you want to delete this task?')) {
+            if (confirm(translations.confirm_delete)) {
                 try {
                     const response = await fetch(`${api.tasks}/${id}`, { method: 'DELETE' });
-                    if (!response.ok) throw new Error('Server error');
+                    if (!response.ok) throw new Error(translations.server_error);
                     row.remove();
-                    showToast('Task deleted successfully!');
+                    showToast(translations.deleted_successfully);
                 } catch (error) {
                     console.error('Failed to delete task:', error);
-                    showToast('Failed to delete task.', false);
+                    showToast(translations.failed_to_delete, false);
                 }
             }
         }
@@ -218,12 +219,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const id = document.getElementById('taskId').value;
         const formData = new FormData(taskForm);
-        const id = formData.get('id');
         const data = Object.fromEntries(formData.entries());
-        // Clean up optional fields
-        if (!data.contact_id) data.contact_id = null;
-        if (!data.deal_id) data.deal_id = null;
+        data.contact_id = data.contact_id || null;
 
         const method = id ? 'PUT' : 'POST';
         const url = id ? `${api.tasks}/${id}` : api.tasks;
@@ -235,22 +234,24 @@ document.addEventListener('DOMContentLoaded', async function () {
             
             const newRow = renderRow(savedTask);
             if (id) {
-                tableBody.querySelector(`tr[data-id="${id}"]`).replaceWith(newRow);
+                const oldRow = tableBody.querySelector(`tr[data-id="${id}"]`);
+                if(oldRow) oldRow.replaceWith(newRow);
             } else {
                 tableBody.prepend(newRow);
             }
             
             taskModal.hide();
-            showToast(`Task ${id ? 'updated' : 'created'} successfully!`);
+            const message = id ? translations.updated_successfully : translations.created_successfully;
+            showToast(message);
         } catch (error) {
             console.error('Failed to save task:', error);
-            showToast('Failed to save task.', false);
+            showToast(translations.failed_to_save, false);
         }
     });
 
-    // --- Initial Load ---
-    relatedDataCache.users = await loadSelectOptions(api.users, 'user_id', 'Select a user');
-    relatedDataCache.contacts = await loadSelectOptions(api.contacts, 'contact_id', 'None');
-    await loadTasks();
+    // Initial Load
+    loadTasks();
+    loadSelectOptions(api.users, 'user_id', translations.select_user);
+    loadSelectOptions(api.contacts, 'contact_id', translations.select_contact_optional);
 });
-</script> 
+</script>

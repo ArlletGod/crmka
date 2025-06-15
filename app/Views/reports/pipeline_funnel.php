@@ -1,4 +1,4 @@
-<h1>Pipeline Funnel</h1>
+<h1><?= __('pipeline_funnel') ?></h1>
 
 <div style="width: 75%; margin: auto;">
     <canvas id="pipelineChart"></canvas>
@@ -12,7 +12,7 @@
         data: {
             labels: <?= $chartLabels ?>,
             datasets: [{
-                label: '# of Deals',
+                label: '<?= __('number_of_deals') ?>',
                 data: <?= $chartData ?>,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -47,7 +47,7 @@
                 },
                 title: {
                     display: true,
-                    text: 'Deals per Stage'
+                    text: '<?= __('deals_per_stage') ?>'
                 }
             }
         }

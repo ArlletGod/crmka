@@ -1,17 +1,17 @@
-<h1>Companies</h1>
+<h1><?= __('companies') ?></h1>
 
 <!-- Add Company Button -->
-<button id="addCompanyBtn" class="btn btn-primary mb-3">Add Company</button>
+<button id="addCompanyBtn" class="btn btn-primary mb-3"><?= __('add_company') ?></button>
 
 <!-- Companies Table -->
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Actions</th>
+            <th><?= __('name') ?></th>
+            <th><?= __('address') ?></th>
+            <th><?= __('phone') ?></th>
+            <th><?= __('actions') ?></th>
         </tr>
     </thead>
     <tbody id="companiesTableBody">
@@ -24,29 +24,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="companyModalLabel">Add Company</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="companyModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= __('close') ?>"></button>
             </div>
             <div class="modal-body">
                 <form id="companyForm">
                     <input type="hidden" id="companyId" name="id">
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label"><?= __('name') ?></label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label"><?= __('address') ?></label>
                         <input type="text" class="form-control" id="address" name="address">
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label"><?= __('phone') ?></label>
                         <input type="tel" class="form-control" id="phone" name="phone">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="companyForm" class="btn btn-primary">Save Company</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('close') ?></button>
+                <button type="submit" form="companyForm" class="btn btn-primary"><?= __('save_company') ?></button>
             </div>
         </div>
     </div>
@@ -56,8 +56,8 @@
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
   <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-      <strong class="me-auto">Notification</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      <strong class="me-auto"><?= __('notification') ?></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="<?= __('close') ?>"></button>
     </div>
     <div class="toast-body">
       <!-- Message will be inserted here -->
@@ -66,6 +66,22 @@
 </div>
 
 <script>
+const translations = {
+    edit: "<?= __('edit_company') ?>",
+    add: "<?= __('add_company') ?>",
+    confirm_delete: "<?= __('confirm_delete_company') ?>",
+    created_successfully: "<?= __('company_created_successfully') ?>",
+    updated_successfully: "<?= __('company_updated_successfully') ?>",
+    deleted_successfully: "<?= __('company_deleted_successfully') ?>",
+    failed_to_load: "<?= __('failed_to_load_companies') ?>",
+    failed_to_save: "<?= __('failed_to_save_company') ?>",
+    failed_to_load_data: "<?= __('failed_to_load_company_data') ?>",
+    failed_to_delete: "<?= __('failed_to_delete_company') ?>",
+    server_error: "<?= __('server_error') ?>",
+    edit_btn: "<?= __('edit') ?>",
+    delete_btn: "<?= __('delete') ?>",
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     const companyModal = new bootstrap.Modal(document.getElementById('companyModal'));
     const companyForm = document.getElementById('companyForm');
@@ -79,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Utility Functions ---
     const showToast = (message, success = true) => {
         toastElement.querySelector('.toast-body').textContent = message;
-        // Simple class management for background colors
         toastElement.classList.remove('bg-success', 'bg-danger');
         toastElement.classList.add(success ? 'bg-success' : 'bg-danger');
         toast.show();
@@ -103,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${escapeHTML(company.address)}</td>
             <td>${escapeHTML(company.phone)}</td>
             <td>
-                <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                <button class="btn btn-sm btn-warning edit-btn">${translations.edit_btn}</button>
+                <button class="btn btn-sm btn-danger delete-btn">${translations.delete_btn}</button>
             </td>
         `;
         return row;
@@ -114,13 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadCompanies = async () => {
         try {
             const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error('Failed to fetch');
+            if (!response.ok) throw new Error(translations.failed_to_load);
             const companies = await response.json();
             tableBody.innerHTML = '';
             companies.forEach(company => tableBody.appendChild(renderRow(company)));
         } catch (error) {
             console.error('Failed to load companies:', error);
-            showToast('Failed to load companies.', false);
+            showToast(error.message, false);
         }
     };
 
@@ -139,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            if (!response.ok) throw new Error('Server returned an error');
+            if (!response.ok) throw new Error(translations.server_error);
 
             const savedCompany = await response.json();
             
@@ -153,17 +168,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             
             companyModal.hide();
-            showToast(`Company ${companyId ? 'updated' : 'created'} successfully!`);
+            const message = companyId ? translations.updated_successfully : translations.created_successfully;
+            showToast(message);
         } catch (error) {
             console.error('Failed to save company:', error);
-            showToast('Failed to save company.', false);
+            showToast(translations.failed_to_save, false);
         }
     });
 
     document.getElementById('addCompanyBtn').addEventListener('click', () => {
         companyForm.reset();
         document.getElementById('companyId').value = '';
-        companyModalLabel.textContent = 'Add Company';
+        companyModalLabel.textContent = translations.add;
         companyModal.show();
     });
 
@@ -176,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (target.classList.contains('edit-btn')) {
             try {
                 const response = await fetch(`${apiUrl}/${companyId}`);
-                if (!response.ok) throw new Error('Failed to fetch company data');
+                if (!response.ok) throw new Error(translations.failed_to_load_data);
                 const company = await response.json();
                 
                 document.getElementById('companyId').value = company.id;
@@ -184,25 +200,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('address').value = company.address || '';
                 document.getElementById('phone').value = company.phone || '';
 
-                companyModalLabel.textContent = 'Edit Company';
+                companyModalLabel.textContent = translations.edit;
                 companyModal.show();
             } catch (error) {
                  console.error('Failed to fetch company for editing:', error);
-                 showToast('Failed to load company data.', false);
+                 showToast(error.message, false);
             }
         }
 
         if (target.classList.contains('delete-btn')) {
-            if (confirm('Are you sure you want to delete this company?')) {
+            if (confirm(translations.confirm_delete)) {
                 try {
                     const response = await fetch(`${apiUrl}/${companyId}`, { method: 'DELETE' });
-                    if (!response.ok) throw new Error('Server error');
+                    if (!response.ok) throw new Error(translations.server_error);
                     
                     row.remove();
-                    showToast('Company deleted successfully!');
+                    showToast(translations.deleted_successfully);
                 } catch (error) {
                     console.error('Failed to delete company:', error);
-                    showToast('Failed to delete company.', false);
+                    showToast(translations.failed_to_delete, false);
                 }
             }
         }

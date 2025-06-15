@@ -1,11 +1,11 @@
-<h1>Sales by Manager Report</h1>
+<h1><?= __('sales_by_manager_report') ?></h1>
 
 <table class="table table-bordered table-striped">
     <thead>
     <tr>
-        <th>Manager Name</th>
-        <th>Won Deals Count</th>
-        <th>Total Budget (Won Deals)</th>
+        <th><?= __('manager_name') ?></th>
+        <th><?= __('won_deals_count') ?></th>
+        <th><?= __('total_budget_won_deals') ?></th>
     </tr>
     </thead>
     <tbody>
