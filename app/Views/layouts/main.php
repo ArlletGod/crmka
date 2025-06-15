@@ -16,6 +16,18 @@
                     <a class="nav-link" href="/contacts">Contacts</a>
                 </li>
             </ul>
+            <div class="d-flex">
+                <?php $auth = new \App\Core\Auth(); ?>
+                <?php if ($auth->check()): ?>
+                    <span class="navbar-text me-3">
+                        Welcome, <?= htmlspecialchars($auth->user()['id']) ?> (<?= htmlspecialchars($auth->user()['role'] ?? 'user') ?>)
+                    </span>
+                    <a href="/logout" class="btn btn-outline-secondary">Logout</a>
+                <?php else: ?>
+                    <a href="/login" class="btn btn-primary me-2">Login</a>
+                    <a href="/register" class="btn btn-secondary">Register</a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </nav>
