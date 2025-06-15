@@ -4,6 +4,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ContactController;
 use App\Controllers\HomeController;
 use App\Controllers\CompanyController;
+use App\Controllers\DealController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
@@ -19,6 +20,7 @@ return [
     // --- Authenticated routes ---
     // Can only be accessed by authenticated users
     ['GET', '/', [HomeController::class, 'index'], [AuthMiddleware::class]],
+    ['GET', '/deals', [DealController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]],
 
     // Contacts
