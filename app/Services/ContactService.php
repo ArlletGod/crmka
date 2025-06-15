@@ -18,11 +18,11 @@ class ContactService
         return $this->contactRepository->findAll();
     }
 
-    public function createContact(array $data): bool
+    public function createContact(array $data): ?\App\Models\Contact
     {
         // Здесь должна быть более серьезная валидация
         if (empty($data['name'])) {
-            return false;
+            return null;
         }
 
         $contact = new \App\Models\Contact();
@@ -39,17 +39,17 @@ class ContactService
         return $this->contactRepository->findById($id);
     }
 
-    public function updateContact(int $id, array $data): bool
+    public function updateContact(int $id, array $data): ?\App\Models\Contact
     {
         $contact = $this->contactRepository->findById($id);
         if (!$contact) {
-            return false;
+            return null;
         }
 
         $contact->name = htmlspecialchars($data['name'] ?? $contact->name);
         $contact->email = isset($data['email']) ? htmlspecialchars($data['email']) : $contact->email;
         $contact->phone = isset($data['phone']) ? htmlspecialchars($data['phone']) : $contact->phone;
-        $contact->company_id = !empty($data['company_id']) ? (int)$data['company_id'] : null;
+        $contact->company_id = !empty($data['company_id']) ? (int)$data['company_id'] : $contact->company_id;
 
         return $this->contactRepository->update($contact);
     }

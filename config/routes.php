@@ -59,19 +59,6 @@ return [
     ['DELETE', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'destroy'], [AuthMiddleware::class, AdminMiddleware::class]],
 
     // --- Web Pages (some are handled by JS) ---
-    // Contacts
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
-    ['GET', '/contacts/create', [ContactController::class, 'create'], [AuthMiddleware::class]],
-    ['POST', '/contacts', [ContactController::class, 'store'], [AuthMiddleware::class]],
-    ['GET', '/contacts/edit/{id:\d+}', [ContactController::class, 'edit'], [AuthMiddleware::class]],
-    ['POST', '/contacts/update/{id:\d+}', [ContactController::class, 'update'], [AuthMiddleware::class]],
-    ['GET', '/contacts/delete/{id:\d+}', [ContactController::class, 'delete'], [AuthMiddleware::class, AdminMiddleware::class]],
-
-    // Companies
     ['GET', '/companies', [CompanyController::class, 'index'], [AuthMiddleware::class]],
-    ['GET', '/companies/create', [CompanyController::class, 'create'], [AuthMiddleware::class]],
-    ['POST', '/companies', [CompanyController::class, 'store'], [AuthMiddleware::class]],
-    ['GET', '/companies/edit/{id:\d+}', [CompanyController::class, 'edit'], [AuthMiddleware::class]],
-    ['POST', '/companies/update/{id:\d+}', [CompanyController::class, 'update'], [AuthMiddleware::class]],
-    ['GET', '/companies/delete/{id:\d+}', [CompanyController::class, 'delete'], [AuthMiddleware::class, AdminMiddleware::class]],
 ]; 

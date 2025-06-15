@@ -23,7 +23,7 @@ class ContactController extends ApiController
     {
         $contact = $this->contactService->getContactById($id);
         if (!$contact) {
-            $this->jsonError('Contact not found');
+            $this->jsonError('Contact not found', 404);
             return;
         }
         $this->jsonResponse($contact);
@@ -37,10 +37,12 @@ class ContactController extends ApiController
             return;
         }
 
-        $contactId = $this->contactService->createContact($data);
+        $newContact = $this->contactService->createContact($data);
 
-        if ($contactId) {
-            $this->jsonResponse(['id' => $contactId, 'message' => 'Contact created successfully'], 201);
+        if ($newContact) {
+            // After creating, we need the version with the company_name
+            $contactWithDetails = $this->contactService->getContactById($newContact->id);
+            $this->jsonResponse($contactWithDetails, 201);
         } else {
             $this->jsonError('Failed to create contact', 400);
         }
@@ -54,10 +56,12 @@ class ContactController extends ApiController
             return;
         }
 
-        $success = $this->contactService->updateContact($id, $data);
+        $updatedContact = $this->contactService->updateContact($id, $data);
 
-        if ($success) {
-            $this->jsonResponse(['message' => 'Contact updated successfully']);
+        if ($updatedContact) {
+            // After updating, we need the version with the company_name
+            $contactWithDetails = $this->contactService->getContactById($updatedContact->id);
+            $this->jsonResponse($contactWithDetails);
         } else {
             $this->jsonError('Failed to update contact or contact not found', 400);
         }
