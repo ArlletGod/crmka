@@ -1,14 +1,22 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use App\Core\Router;
+use App\Core\Database;
 use App\Core\Translator;
 
-require __DIR__ . '/../vendor/autoload.php';
+// Initialize the Database connection
+Database::getInstance();
 
 // Initialize the Translator
-Translator::init();
+(new \App\Core\Translator)->init();
 
 // Global helper function for easy access to translations
 function __(string $key, array $replace = []): string
@@ -16,6 +24,7 @@ function __(string $key, array $replace = []): string
     return Translator::get($key, $replace);
 }
 
+// Simple routing
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 

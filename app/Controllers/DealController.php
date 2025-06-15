@@ -7,6 +7,8 @@ use App\Repositories\ContactRepository;
 use App\Repositories\DealRepository;
 use App\Repositories\PipelineStageRepository;
 use App\Services\DealService;
+use App\Models\Deal;
+use App\Repositories\CommentRepository;
 
 class DealController
 {
@@ -122,5 +124,23 @@ class DealController
 
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
+    }
+
+    public function show(int $id)
+    {
+        $deal = $this->dealService->getDealById($id);
+
+        if (!$deal) {
+            // Handle not found, maybe a 404 page
+            echo "Deal not found";
+            return;
+        }
+
+        $comments = (new CommentRepository())->findByCommentable($id, Deal::class);
+
+        echo (new View())->render('deals/show', [
+            'deal' => $deal,
+            'comments' => $comments
+        ]);
     }
 } 

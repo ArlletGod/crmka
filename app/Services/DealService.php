@@ -70,4 +70,9 @@ class DealService
 
         return $this->dealRepository->updateStageAndStatus($dealId, $newStageId, $status);
     }
+
+    public function getDealById(int $id): ?object
+    {
+        return $this->dealRepository->findById($id);
+    }
 } 

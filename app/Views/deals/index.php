@@ -42,6 +42,10 @@
         margin-bottom: 10px;
         cursor: grab;
     }
+    .deal-card-link, .deal-card-link:hover {
+        text-decoration: none;
+        color: inherit;
+    }
 </style>
 
 <h1><?= __('sales_pipeline') ?></h1>
@@ -56,12 +60,14 @@
                     <hr>
                     <div class="deals-container" data-stage-id="<?= $stageId ?>">
                         <?php foreach ($stageData['deals'] as $deal): ?>
-                            <div class="deal-card" data-deal-id="<?= $deal->id ?>">
-                                <h6><?= htmlspecialchars($deal->name) ?></h6>
-                                <p class="mb-1"><strong><?= __('budget') ?>:</strong> <?= formatDisplayCurrency($deal->budget, $displayCurrency, $displaySymbol, $rates) ?></p>
-                                <p class="mb-1"><strong><?= __('contact') ?>:</strong> <?= htmlspecialchars($deal->contact_name) ?></p>
-                                <p class="mb-0"><strong><?= __('manager') ?>:</strong> <?= htmlspecialchars($deal->user_name) ?></p>
-                            </div>
+                            <a href="/deals/<?= $deal->id ?>" class="deal-card-link">
+                                <div class="deal-card" data-deal-id="<?= $deal->id ?>">
+                                    <h6><?= htmlspecialchars($deal->name) ?></h6>
+                                    <p class="mb-1"><strong><?= __('budget') ?>:</strong> <?= formatDisplayCurrency($deal->budget, $displayCurrency, $displaySymbol, $rates) ?></p>
+                                    <p class="mb-1"><strong><?= __('contact') ?>:</strong> <?= htmlspecialchars($deal->contact_name) ?></p>
+                                    <p class="mb-0"><strong><?= __('manager') ?>:</strong> <?= htmlspecialchars($deal->user_name) ?></p>
+                                </div>
+                            </a>
                         <?php endforeach; ?>
                         <?php if (empty($stageData['deals'])): ?>
                             <p class="text-center text-muted no-deals"><?= __('no_deals_in_stage') ?></p>

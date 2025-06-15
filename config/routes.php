@@ -17,6 +17,7 @@ use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
 use App\Controllers\SearchController;
+use App\Controllers\CommentController;
 
 return [
     // --- Guest routes ---
@@ -31,8 +32,10 @@ return [
     ['GET', '/', [HomeController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/deals', [DealController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/deals/create', [DealController::class, 'create'], [AuthMiddleware::class]],
+    ['GET', '/deals/{id:\d+}', [DealController::class, 'show'], [AuthMiddleware::class]],
     ['POST', '/deals', [DealController::class, 'store'], [AuthMiddleware::class]],
     ['POST', '/api/deals/{id:\d+}/move', [DealController::class, 'move'], [AuthMiddleware::class]],
+    ['POST', '/comments', [CommentController::class, 'store'], [AuthMiddleware::class]],
 
     // Tasks
     ['GET', '/tasks', [TaskController::class, 'index'], [AuthMiddleware::class]],
