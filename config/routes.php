@@ -7,6 +7,7 @@ use App\Controllers\CompanyController;
 use App\Controllers\DealController;
 use App\Controllers\TaskController;
 use App\Controllers\ReportController;
+use App\Controllers\Api\ContactController as ApiContactController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
@@ -40,6 +41,13 @@ return [
     // Reports
     ['GET', '/reports/sales-by-manager', [ReportController::class, 'salesByManager'], [AuthMiddleware::class]],
     ['GET', '/reports/pipeline-funnel', [ReportController::class, 'pipelineFunnel'], [AuthMiddleware::class]],
+
+    // API Routes
+    ['GET', '/api/contacts', [ApiContactController::class, 'index'], [AuthMiddleware::class]],
+    ['POST', '/api/contacts', [ApiContactController::class, 'store'], [AuthMiddleware::class]],
+    ['GET', '/api/contacts/{id:\d+}', [ApiContactController::class, 'show'], [AuthMiddleware::class]],
+    ['PUT', '/api/contacts/{id:\d+}', [ApiContactController::class, 'update'], [AuthMiddleware::class]],
+    ['DELETE', '/api/contacts/{id:\d+}', [ApiContactController::class, 'destroy'], [AuthMiddleware::class]],
 
     // Contacts
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
