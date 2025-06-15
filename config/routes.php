@@ -23,6 +23,7 @@ return [
     ['GET', '/deals', [DealController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/deals/create', [DealController::class, 'create'], [AuthMiddleware::class]],
     ['POST', '/deals', [DealController::class, 'store'], [AuthMiddleware::class]],
+    ['POST', '/api/deals/{id:\d+}/move', [DealController::class, 'move'], [AuthMiddleware::class]],
     ['GET', '/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]],
 
     // Contacts

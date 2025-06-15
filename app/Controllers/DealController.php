@@ -60,4 +60,21 @@ class DealController
         header('Location: /deals');
         exit;
     }
+
+    public function move(int $id)
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $newStageId = $data['new_stage_id'] ?? null;
+
+        if (!$newStageId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'New stage ID is required.']);
+            return;
+        }
+
+        $success = $this->dealService->updateDealStage($id, (int)$newStageId);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => $success]);
+    }
 } 

@@ -31,4 +31,9 @@ class DealService
 
         return $this->dealRepository->create($deal);
     }
+
+    public function updateDealStage(int $dealId, int $newStageId): bool
+    {
+        return $this->dealRepository->updateStage($dealId, $newStageId);
+    }
 } 

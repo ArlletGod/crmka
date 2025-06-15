@@ -24,7 +24,7 @@
                 <div class="pipeline-stage">
                     <h5 class="text-center"><?= htmlspecialchars($stageData['name']) ?></h5>
                     <hr>
-                    <div class="deals-container">
+                    <div class="deals-container" data-stage-id="<?= $stageId ?>">
                         <?php foreach ($stageData['deals'] as $deal): ?>
                             <div class="deal-card" data-deal-id="<?= $deal->id ?>">
                                 <h6><?= htmlspecialchars($deal->name) ?></h6>
@@ -41,4 +41,39 @@
             </div>
         <?php endforeach; ?>
     </div>
-</div> 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dealContainers = document.querySelectorAll('.deals-container');
+
+        dealContainers.forEach(container => {
+            new Sortable(container, {
+                group: 'deals',
+                animation: 150,
+                onEnd: function (evt) {
+                    const dealId = evt.item.dataset.dealId;
+                    const newStageId = evt.to.dataset.stageId;
+                    
+                    fetch(`/api/deals/${dealId}/move`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ new_stage_id: newStageId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to move deal');
+                            // Optionally move the card back to its original position
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        });
+    });
+</script> 

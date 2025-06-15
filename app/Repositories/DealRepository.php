@@ -48,4 +48,10 @@ class DealRepository
             date('Y-m-d H:i:s')
         ]);
     }
+
+    public function updateStage(int $dealId, int $newStageId): bool
+    {
+        $stmt = $this->db->prepare("UPDATE deals SET stage_id = ?, updated_at = ? WHERE id = ?");
+        return $stmt->execute([$newStageId, date('Y-m-d H:i:s'), $dealId]);
+    }
 } 
