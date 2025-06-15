@@ -15,11 +15,11 @@ class DealService
         $this->dealRepository = new DealRepository();
     }
 
-    public function createDeal(array $data): bool
+    public function createDeal(array $data): ?Deal
     {
         $auth = new Auth();
         if (!$auth->check()) {
-            return false; // Or throw an exception
+            return null; // Or throw an exception
         }
 
         $deal = new Deal();
@@ -27,7 +27,7 @@ class DealService
         $deal->budget = !empty($data['budget']) ? (float)$data['budget'] : null;
         $deal->contact_id = (int)$data['contact_id'];
         $deal->stage_id = (int)$data['stage_id'];
-        $deal->user_id = $auth->id();
+        $deal->user_id = (int)$data['user_id'];
 
         $status = 'in_progress';
         if ($deal->stage_id === 4) {

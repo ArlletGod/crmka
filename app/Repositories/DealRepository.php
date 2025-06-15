@@ -31,14 +31,31 @@ class DealRepository
         return $stmt->fetchAll(PDO::FETCH_CLASS, Deal::class);
     }
 
-    public function create(Deal $deal): bool
+    public function findById(int $id): ?Deal
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                d.*, 
+                c.name as contact_name,
+                u.name as user_name
+            FROM deals d
+            JOIN contacts c ON d.contact_id = c.id
+            JOIN users u ON d.user_id = u.id
+            WHERE d.id = ?
+        ");
+        $stmt->execute([$id]);
+        $deal = $stmt->fetchObject(Deal::class);
+        return $deal ?: null;
+    }
+
+    public function create(Deal $deal): ?Deal
     {
         $stmt = $this->db->prepare(
             "INSERT INTO deals (name, budget, status, contact_id, user_id, stage_id, created_at, updated_at) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
-        return $stmt->execute([
+        $success = $stmt->execute([
             $deal->name,
             $deal->budget,
             $deal->status,
@@ -48,6 +65,12 @@ class DealRepository
             date('Y-m-d H:i:s'),
             date('Y-m-d H:i:s')
         ]);
+
+        if ($success) {
+            $id = (int)$this->db->lastInsertId();
+            return $this->findById($id);
+        }
+        return null;
     }
 
     public function updateStageAndStatus(int $dealId, int $newStageId, string $status): bool
@@ -55,4 +78,4 @@ class DealRepository
         $stmt = $this->db->prepare("UPDATE deals SET stage_id = ?, status = ?, updated_at = ? WHERE id = ?");
         return $stmt->execute([$newStageId, $status, date('Y-m-d H:i:s'), $dealId]);
     }
-} 
+}

@@ -56,8 +56,34 @@ class DealController
 
     public function store()
     {
-        $this->dealService->createDeal($_POST);
-        header('Location: /deals');
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            if (empty($data['name']) || empty($data['contact_id']) || empty($data['stage_id'])) {
+                http_response_code(400);
+                echo json_encode(['message' => 'Missing required fields.']);
+                exit;
+            }
+
+            $newDeal = $this->dealService->createDeal($data);
+
+            if ($newDeal) {
+                header('Content-Type: application/json');
+                http_response_code(201);
+                echo json_encode($newDeal);
+            } else {
+                http_response_code(500);
+                echo json_encode(['message' => 'Failed to create deal. Service returned null.']);
+            }
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'message' => 'An internal server error occurred.',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString() // For debugging only
+            ]);
+        }
         exit;
     }
 
