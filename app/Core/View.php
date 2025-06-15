@@ -22,8 +22,6 @@ class View
 
         ob_start();
         require $layoutPath;
-        $layoutContent = ob_get_clean();
-
-        return str_replace('{{content}}', $content, $layoutContent);
+        return ob_get_clean();
     }
 } 

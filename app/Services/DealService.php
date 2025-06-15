@@ -29,11 +29,26 @@ class DealService
         $deal->stage_id = (int)$data['stage_id'];
         $deal->user_id = $auth->id();
 
+        $status = 'in_progress';
+        if ($deal->stage_id === 4) {
+            $status = 'won';
+        } elseif ($deal->stage_id === 5) {
+            $status = 'lost';
+        }
+        $deal->status = $status;
+
         return $this->dealRepository->create($deal);
     }
 
     public function updateDealStage(int $dealId, int $newStageId): bool
     {
-        return $this->dealRepository->updateStage($dealId, $newStageId);
+        $status = 'in_progress';
+        if ($newStageId === 4) { // Assuming stage ID 4 is 'Won'
+            $status = 'won';
+        } elseif ($newStageId === 5) { // Assuming stage ID 5 is 'Lost'
+            $status = 'lost';
+        }
+
+        return $this->dealRepository->updateStageAndStatus($dealId, $newStageId, $status);
     }
 } 

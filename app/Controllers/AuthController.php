@@ -9,10 +9,12 @@ use App\Services\UserService;
 class AuthController
 {
     private UserService $userService;
+    private Auth $auth;
 
     public function __construct()
     {
         $this->userService = new UserService();
+        $this->auth = new Auth();
     }
 
     public function create()
@@ -46,18 +48,23 @@ class AuthController
         $user = $this->userService->login($_POST);
 
         if ($user) {
-            (new Auth())->login($user->id, $user->role);
+            $this->auth->login([
+                'id' => $user->id,
+                'name' => $user->name,
+                'role' => $user->role
+            ]);
             header('Location: /');
+            exit;
         } else {
             // Можно добавить сообщение об ошибке
             header('Location: /login');
+            exit;
         }
-        exit;
     }
 
     public function logout()
     {
-        (new Auth())->logout();
+        $this->auth->logout();
         header('Location: /login');
         exit;
     }

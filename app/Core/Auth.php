@@ -13,29 +13,26 @@ class Auth
 
     public function check(): bool
     {
-        return isset($_SESSION['user_id']);
+        return isset($_SESSION['user']);
     }
 
     public function id(): ?int
     {
-        return $_SESSION['user_id'] ?? null;
+        return $_SESSION['user']['id'] ?? null;
     }
 
     public function user(): ?array
     {
-        if (!$this->check()) {
-            return null;
-        }
-        return [
-            'id' => $_SESSION['user_id'],
-            'role' => $_SESSION['user_role'] ?? null
-        ];
+        return $_SESSION['user'] ?? null;
     }
 
-    public function login(int $userId, string $role): void
+    public function login(array $user): void
     {
-        $_SESSION['user_id'] = $userId;
-        $_SESSION['user_role'] = $role;
+        $_SESSION['user'] = [
+            'id' => $user['id'],
+            'name' => $user['name'],
+            'role' => $user['role']
+        ];
     }
 
     public function logout(): void

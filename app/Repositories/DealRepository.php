@@ -34,13 +34,14 @@ class DealRepository
     public function create(Deal $deal): bool
     {
         $stmt = $this->db->prepare(
-            "INSERT INTO deals (name, budget, contact_id, user_id, stage_id, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO deals (name, budget, status, contact_id, user_id, stage_id, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         return $stmt->execute([
             $deal->name,
             $deal->budget,
+            $deal->status,
             $deal->contact_id,
             $deal->user_id,
             $deal->stage_id,
@@ -49,9 +50,9 @@ class DealRepository
         ]);
     }
 
-    public function updateStage(int $dealId, int $newStageId): bool
+    public function updateStageAndStatus(int $dealId, int $newStageId, string $status): bool
     {
-        $stmt = $this->db->prepare("UPDATE deals SET stage_id = ?, updated_at = ? WHERE id = ?");
-        return $stmt->execute([$newStageId, date('Y-m-d H:i:s'), $dealId]);
+        $stmt = $this->db->prepare("UPDATE deals SET stage_id = ?, status = ?, updated_at = ? WHERE id = ?");
+        return $stmt->execute([$newStageId, $status, date('Y-m-d H:i:s'), $dealId]);
     }
 } 

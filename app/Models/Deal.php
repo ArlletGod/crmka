@@ -7,6 +7,7 @@ class Deal
     public ?int $id = null;
     public string $name;
     public ?float $budget = null;
+    public string $status;
     public int $contact_id;
     public int $user_id;
     public int $stage_id;

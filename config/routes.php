@@ -6,6 +6,7 @@ use App\Controllers\HomeController;
 use App\Controllers\CompanyController;
 use App\Controllers\DealController;
 use App\Controllers\TaskController;
+use App\Controllers\ReportController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
@@ -35,6 +36,9 @@ return [
     ['POST', '/tasks/{id:\d+}/delete', [TaskController::class, 'destroy'], [AuthMiddleware::class]],
 
     ['GET', '/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]],
+
+    // Reports
+    ['GET', '/reports/sales-by-manager', [ReportController::class, 'salesByManager'], [AuthMiddleware::class]],
 
     // Contacts
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
