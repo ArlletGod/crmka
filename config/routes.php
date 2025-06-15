@@ -8,6 +8,7 @@ use App\Controllers\DealController;
 use App\Controllers\TaskController;
 use App\Controllers\ReportController;
 use App\Controllers\Api\ContactController as ApiContactController;
+use App\Controllers\Api\CompanyController as ApiCompanyController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\AdminMiddleware;
@@ -42,13 +43,22 @@ return [
     ['GET', '/reports/sales-by-manager', [ReportController::class, 'salesByManager'], [AuthMiddleware::class]],
     ['GET', '/reports/pipeline-funnel', [ReportController::class, 'pipelineFunnel'], [AuthMiddleware::class]],
 
-    // API Routes
+    // --- API Routes ---
+    // Contacts
     ['GET', '/api/contacts', [ApiContactController::class, 'index'], [AuthMiddleware::class]],
     ['POST', '/api/contacts', [ApiContactController::class, 'store'], [AuthMiddleware::class]],
     ['GET', '/api/contacts/{id:\d+}', [ApiContactController::class, 'show'], [AuthMiddleware::class]],
     ['PUT', '/api/contacts/{id:\d+}', [ApiContactController::class, 'update'], [AuthMiddleware::class]],
-    ['DELETE', '/api/contacts/{id:\d+}', [ApiContactController::class, 'destroy'], [AuthMiddleware::class]],
+    ['DELETE', '/api/contacts/{id:\d+}', [ApiContactController::class, 'destroy'], [AuthMiddleware::class, AdminMiddleware::class]],
 
+    // Companies
+    ['GET', '/api/companies', [ApiCompanyController::class, 'index'], [AuthMiddleware::class]],
+    ['POST', '/api/companies', [ApiCompanyController::class, 'store'], [AuthMiddleware::class]],
+    ['GET', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'show'], [AuthMiddleware::class]],
+    ['PUT', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'update'], [AuthMiddleware::class]],
+    ['DELETE', '/api/companies/{id:\d+}', [ApiCompanyController::class, 'destroy'], [AuthMiddleware::class, AdminMiddleware::class]],
+
+    // --- Web Pages (some are handled by JS) ---
     // Contacts
     ['GET', '/contacts', [ContactController::class, 'index'], [AuthMiddleware::class]],
     ['GET', '/contacts/create', [ContactController::class, 'create'], [AuthMiddleware::class]],

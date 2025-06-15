@@ -36,16 +36,25 @@ class CompanyRepository
         return $company;
     }
 
-    public function create(Company $company): bool
+    public function create(Company $company): ?Company
     {
         $stmt = $this->db->prepare("INSERT INTO companies (name, address, phone, created_at, updated_at) VALUES (?, ?, ?, ?, ?)");
-        return $stmt->execute([$company->name, $company->address, $company->phone, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')]);
+        $success = $stmt->execute([$company->name, $company->address, $company->phone, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')]);
+        if ($success) {
+            $id = (int)$this->db->lastInsertId();
+            return $this->findById($id);
+        }
+        return null;
     }
 
-    public function update(Company $company): bool
+    public function update(Company $company): ?Company
     {
         $stmt = $this->db->prepare("UPDATE companies SET name = ?, address = ?, phone = ?, updated_at = ? WHERE id = ?");
-        return $stmt->execute([$company->name, $company->address, $company->phone, date('Y-m-d H:i:s'), $company->id]);
+        $success = $stmt->execute([$company->name, $company->address, $company->phone, date('Y-m-d H:i:s'), $company->id]);
+        if ($success) {
+            return $this->findById($company->id);
+        }
+        return null;
     }
 
     public function delete(int $id): bool

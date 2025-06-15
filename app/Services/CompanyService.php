@@ -24,7 +24,7 @@ class CompanyService
         return $this->companyRepository->findById($id);
     }
 
-    public function createCompany(array $data): bool
+    public function createCompany(array $data): ?Company
     {
         $company = new Company();
         $company->name = htmlspecialchars($data['name']);
@@ -34,11 +34,11 @@ class CompanyService
         return $this->companyRepository->create($company);
     }
 
-    public function updateCompany(int $id, array $data): bool
+    public function updateCompany(int $id, array $data): ?Company
     {
         $company = $this->companyRepository->findById($id);
         if (!$company) {
-            return false;
+            return null;
         }
 
         $company->name = htmlspecialchars($data['name'] ?? $company->name);
